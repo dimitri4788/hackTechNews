@@ -13,6 +13,7 @@ resultCode = {
     "resultOk": "No error",
     "resultFlagError": "Error with flag(s)."
 }
+hackerNewsURL = "https://news.ycombinator.com/"
 usage = """\
 usage: hackNews [-h | -help]
                 [-p <number of pages to scan>]
@@ -56,7 +57,6 @@ def parseArguments(arguments):
     if(argumentsLen % 2 == 0):
         return resultCode["resultFlagError"]
 
-    #numOfIterations = ((argumentsLen-1)/2) #XXX
     #Get the indices of flags keys and values
     flagKeyIndex = range(1, argumentsLen, 2)
     flagValueIndex = range(2, argumentsLen, 2)
@@ -64,24 +64,15 @@ def parseArguments(arguments):
         #This if check is redundant
         return resultCode["resultFlagError"]
 
-    expectedFlagKeys = ["-p", "-c", "-n", "-points"]
-    #XXX
-    #print len(flagKeyIndex)
-    #print len(flagValueIndex)
-    #print flagKeyIndex
-    #print flagValueIndex
     #Iterate over the flagKeyIndex and flagValueIndex and fill argsDict
+    expectedFlagKeys = ["-p", "-c", "-n", "-points"]
     for (i,j) in zip(flagKeyIndex,flagValueIndex):
-        print 'i :', i
-        print 'j :', j
-        if(arguments[i] in expectedFlagKeys):
-            print "Yes"
-        else:
-            print "No"
-        print "*****"
+        if(arguments[i] not in expectedFlagKeys):
+            return resultCode["resultFlagError"]
+
+        argsDict[arguments[i]] = arguments[j]
 
     return resultCode["resultOk"]
-
 
 def main(argc, argv):
     #Check if the script is ran without any arguments
@@ -101,9 +92,12 @@ def main(argc, argv):
         print usage
         sys.exit()
 
+    #Form the 
+
     print "----- Hack Tech News -----"
     print "--------------------------"
     print "\n"
+    print argsDict
 
 if __name__ == "__main__":
     commandLineArgs = sys.argv
