@@ -10,8 +10,8 @@ import webbrowser
 ############################
 argsDict = {} #or use dict()
 resultCode = {
-    "result_ok": "No error",
-    "result_flag_error": "Error with flag(s)."
+    "resultOk": "No error",
+    "resultFlagError": "Error with flag(s)."
 }
 usage = """\
 usage: hackNews [-h | -help]
@@ -22,7 +22,7 @@ usage: hackNews [-h | -help]
 
 Syntax for flags:
     -p:         <Integer greater than 0>
-    -c:         <category1|category2|category3|...>
+    -c:         <category1,category2,category3, ...>
     -n:         <Integer greater than 0>
     -points:    <Integer greater than 0>
 
@@ -32,9 +32,9 @@ Default values of flags:
     -n:         Default value is 1
     -points:    Default value is 0
 
-Example usage: hackNews -p 2 -c c++|linux|apache -n 3
+Example usage: hackNews -p 2 -c c++,linux,apache -n 3
                hackNews -c script -n 2
-               hackNews -c os|guide|database|jquery|rust -points 150
+               hackNews -c os,guide,database,jquery,rust -points 150
 
 Additional information:
     1. The -c flag is needed. Other flags are optional.
@@ -42,24 +42,38 @@ Additional information:
     3. urllib2 and webbrowser libraries are needed.
 """
 
-#./hackNews [-p <number of pages to scan>] [-c <categories to search for>] [-n <number of pages to open at a time> | <all>] [-points <points used to display pages with points higher than this>]
-#0           1      2                        3               4              5          6                                          7          8
+##
+# @brief This function parses the command line arguments and fills the global variable argsDict
+#
+# @param arguments The command line arguments to parse
+#
+# @return It returns one of the resultCode's
 def parseArguments(arguments):
     argumentsLen = len(arguments)
 
     #Check whether number of arguments is odd or not
     if(argumentsLen % 2 == 0):
-        return resultCode["result_flag_error"]
+        return resultCode["resultFlagError"]
 
-    numOfIterations = ((argumentsLen-1)/2)
-    """
-    while(numOfIterations > 0):
-        arguments[]
+    #numOfIterations = ((argumentsLen-1)/2) #XXX
+    #Get the indices of flags keys and values
+    flagKeyIndex = range(1, argumentsLen, 2)
+    flagValueIndex = range(2, argumentsLen, 2)
+    if(len(flagKeyIndex) != len(flagValueIndex)):
+        #This if check is redundant
+        return resultCode["resultFlagError"]
+
+    print len(flagKeyIndex)
+    print len(flagValueIndex)
+    print flagKeyIndex
+    print flagValueIndex
+    #Iterate over the flagKeyIndex and flagValueIndex and fill argsDict
+    #for i in :
+     #   print 'Current Letter :', letter
 
 
-        numOfIterations -= 1;
-    """
 
+    return resultCode["resultOk"]
 
 
 
@@ -75,9 +89,9 @@ def main(argc, argv):
         sys.exit()
 
     #Parse the arguments
-    result = parseArguments(argv)
-    if(result == resultCode["result_flag_error"]):
-        print result
+    parseResult = parseArguments(argv)
+    if(parseResult == resultCode["resultFlagError"]):
+        print parseResult
         print usage
         sys.exit()
 
