@@ -49,6 +49,7 @@ Additional information:
 #
 # @return It returns one of the resultCode's
 def parseArguments(arguments):
+    #Get the length of the list arguments
     argumentsLen = len(arguments)
 
     #Check whether number of arguments is odd or not
@@ -63,18 +64,23 @@ def parseArguments(arguments):
         #This if check is redundant
         return resultCode["resultFlagError"]
 
-    print len(flagKeyIndex)
-    print len(flagValueIndex)
-    print flagKeyIndex
-    print flagValueIndex
+    expectedFlagKeys = ["-p", "-c", "-n", "-points"]
+    #XXX
+    #print len(flagKeyIndex)
+    #print len(flagValueIndex)
+    #print flagKeyIndex
+    #print flagValueIndex
     #Iterate over the flagKeyIndex and flagValueIndex and fill argsDict
-    #for i in :
-     #   print 'Current Letter :', letter
-
-
+    for (i,j) in zip(flagKeyIndex,flagValueIndex):
+        print 'i :', i
+        print 'j :', j
+        if(arguments[i] in expectedFlagKeys):
+            print "Yes"
+        else:
+            print "No"
+        print "*****"
 
     return resultCode["resultOk"]
-
 
 
 def main(argc, argv):
