@@ -1,13 +1,14 @@
 #!/usr/local/bin/python
+# #!/usr/bin/env python XXX
 
 import re
 import sys
 import urllib2
 import webbrowser
 
-############################
-##### Global variables #####
-############################
+#########################
+# Some useful declaration
+#########################
 argsDict = {} #or use dict()
 resultCode = {
     "resultOk": "No error",
@@ -18,27 +19,25 @@ hackerNewsURL = "https://news.ycombinator.com"
 #pathForOverPoints = "/over?points=" XXX
 #https://news.ycombinator.com/over?points=200         XXX
 #https://news.ycombinator.com/over?points=50&p=3      XXX
+regularExpForUrls = '(class="deadmark"></span><a href="https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_;\+.~#?&//=()]*)">(.+</a><)|class="deadmark"></span><a href="https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_;\+.~#?&//=()]*)" rel="nofollow">(.+</a><))'
 usage = """\
 usage: hackNews [-h | -help]
                 [-p <number of pages to scan>]
                 [-c <categories to search for>]
-                [-n <number of pages to open at a time> | <all>]
                 [-points <points used to display pages with points higher than this>]
 
 Syntax for flags:
     -p:         <Integer greater than 0>
     -c:         <category1,category2,category3, ...>
-    -n:         <Integer greater than 0>
     -points:    <Integer greater than 0>
 
 Default values of flags:
     -p:         Default value is 1
     -c:         None; a value is needed
-    -n:         Default value is 1
     -points:    Default value is 0
 
-Example usage: hackNews -p 2 -c c++,linux,apache -n 3
-               hackNews -c script -n 2
+Example usage: hackNews -p 2 -c c++,linux,apache
+               hackNews -c script
                hackNews -c os,guide,database,jquery,rust -points 150
 
 Additional information:
@@ -49,10 +48,10 @@ Additional information:
 
 # @brief This function parses the command line arguments and fills the global variable argsDict
 #   NOTE:
-#   Possible flag keys: -p, -c, -n, -points
+#   Possible flag keys: -p, -c, -points
 #   Possible flag values: <20>, <os,guide,database> etc.
-#   For example: hackNews -p 2 -c c++,linux,apache -n 3
-#                keys: -p, -c, -n
+#   For example: hackNews -p 2 -c c++,linux,apache 3
+#                keys: -p, -c
 #                values: 2, c++,linux,apache, 3
 #
 # @param arguments The command line arguments to parse
@@ -74,14 +73,14 @@ def parseArguments(arguments):
         return resultCode["resultFlagError"]
 
     #Iterate over the flagKeyIndex and flagValueIndex and fill argsDict
-    expectedFlagKeys = ["-p", "-c", "-n", "-points"]
+    expectedFlagKeys = ["-p", "-c", "-points"]
     for (i,j) in zip(flagKeyIndex,flagValueIndex):
         #Check whether flag key is in the expectedFlagKeys or not
         if(arguments[i] not in expectedFlagKeys):
             return resultCode["resultFlagError"]
 
         #Check whether flag value is the correct format and type
-        if(arguments[i] == "-p" or arguments[i] == "-n" or arguments[i] == "-points"):
+        if(arguments[i] == "-p" or arguments[i] == "-points"):
             if(arguments[j].isdigit() == False or int(arguments[j]) < 1):
                 return resultCode["resultFlagError"]
         #elif(arguments[i] == "-c"):
@@ -97,11 +96,25 @@ def parseArguments(arguments):
 #
 # @return  It returns the 
 def processRequest():
+    #TODO deep
     print "Processes Request"
     if '-points' in argsDict:
+        url = hackerNewsURL + "/over?points=" + argsDict['-points']
+        response = urllib2.urlopen(url)
+        htmlData = response.read()
+        #urlMatches = re.findall(r'%s' %(regularExpForUrls), htmlData)
+        urlMatches = re.findall(r'(class="deadmark"></span><a href="https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_;\+.~#?&//=()]*)">(.+</a><)|class="deadmark"></span><a href="https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_;\+.~#?&//=()]*)" rel="nofollow">(.+</a><))', htmlData)
+        print '%s' %(regularExpForUrls)
         print "YESSSSSS"
-
-
+        print url
+        if urlMatches:
+            for match in urlMatches:
+                #print match[0][33:]
+                print match[0]
+                #url = match[0][33:]
+                #webbrowser.get(chrome_path).open(url)
+        else:
+            print 'did not find'
 
 def main(argc, argv):
     #Check if the script is ran without any arguments
