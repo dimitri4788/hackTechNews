@@ -9,7 +9,7 @@ import webbrowser
 #########################
 # Some useful declaration
 #########################
-argsDict = {} #or use dict()
+argsDict = {}  # or use dict()
 resultCode = {
     "resultOk": "No error",
     "resultFlagError": "Error with flag(s)."
@@ -58,28 +58,29 @@ Additional information:
 #
 # @return It returns one of the resultCode's
 def parseArguments(arguments):
-    #Get the length of the list arguments
+    # Get the length of the list arguments
     argumentsLen = len(arguments)
+    print argumentsLen #XXX
 
-    #Check whether number of arguments is odd or not
+    # Check whether number of arguments is odd or not
     if(argumentsLen % 2 == 0):
         return resultCode["resultFlagError"]
 
-    #Get the indices of flags keys and values
+    # Get the indices of flags keys and values
     flagKeyIndex = range(1, argumentsLen, 2)
     flagValueIndex = range(2, argumentsLen, 2)
     if(len(flagKeyIndex) != len(flagValueIndex)):
-        #This if check is redundant
+        # This if check is redundant
         return resultCode["resultFlagError"]
 
-    #Iterate over the flagKeyIndex and flagValueIndex and fill argsDict
+    # Iterate over the flagKeyIndex and flagValueIndex and fill argsDict
     expectedFlagKeys = ["-p", "-c", "-points"]
-    for (i,j) in zip(flagKeyIndex,flagValueIndex):
-        #Check whether flag key is in the expectedFlagKeys or not
+    for (i,j) in zip(flagKeyIndex, flagValueIndex):
+        # Check whether flag key is in the expectedFlagKeys or not
         if(arguments[i] not in expectedFlagKeys):
             return resultCode["resultFlagError"]
 
-        #Check whether flag value is the correct format and type
+        # Check whether flag value is the correct format and type
         if(arguments[i] == "-p" or arguments[i] == "-points"):
             if(arguments[j].isdigit() == False or int(arguments[j]) < 1):
                 return resultCode["resultFlagError"]
@@ -92,42 +93,89 @@ def parseArguments(arguments):
     return resultCode["resultOk"]
 
 # @brief Processes the request based on arguments in argsDict and
-#   forms the output
+#   forms the output TODO
 #
-# @return  It returns the 
+# @return  It returns the TODO
 def processRequest():
-    #TODO deep
-    print "Processes Request"
+    print "Processes Request" # XXX
+    print argsDict
+    numberPoints = "1"
+    numberOfPages = "1"
+    categoriesStringValue = ""
+
+    # Check if points flag is passed, if yes, save in a variable
     if '-points' in argsDict:
-        url = hackerNewsURL + "/over?points=" + argsDict['-points']
+        numberPoints = argsDict['-points']
+    print "numberPoints", numberPoints
+
+    # Check if pages flag is passed, if yes, save in a variable
+    if '-p' in argsDict:
+        numberOfPages = argsDict['-p']
+    print "numberOfPages", numberOfPages
+
+    # Check if categories flag is passed, if yes, save in a variable
+    if '-c' in argsDict:
+        categoriesStringValue = argsDict['-c']
+    print "categoriesStringValue ", categoriesStringValue
+
+    #https://news.ycombinator.com/over?points=200&p=1 XXX
+    # Loop over all the pages, open 3 pages from the top of list of pages
+    #   and display the rest of the list on stdout
+    for page in range(int(numberOfPages)):
+        #strr = 'http://garethrees.org/2015/12/14/javascript/">Plan to throw one away</a><'
+        #urll = strr.split("\">")
+        #print urll[0]
+        #print urll[1]
+        #print urll[1][:-5]
+        url = hackerNewsURL + "/over?points=" + numberPoints + "&p=" + str(page+1)
+        print "url", url #XXX
         response = urllib2.urlopen(url)
         htmlData = response.read()
-        #urlMatches = re.findall(r'%s' %(regularExpForUrls), htmlData)
         urlMatches = re.findall(r'(class="deadmark"></span><a href="https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_;\+.~#?&//=()]*)">(.+</a><)|class="deadmark"></span><a href="https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_;\+.~#?&//=()]*)" rel="nofollow">(.+</a><))', htmlData)
-        print '%s' %(regularExpForUrls)
-        print "YESSSSSS"
-        print url
         if urlMatches:
             for match in urlMatches:
-                #print match[0][33:]
-                print match[0]
+                #print match
+                #print match[0]
+                print match[0][33:].split("\">")
                 #url = match[0][33:]
                 #webbrowser.get(chrome_path).open(url)
         else:
             print 'did not find'
 
+    #if '-points' in argsDict:
+        #url = hackerNewsURL + "/over?points=" + argsDict['-points']
+        #response = urllib2.urlopen(url)
+        #htmlData = response.read()
+        #urlMatches = re.findall(r'%s' %(regularExpForUrls), htmlData)
+        #urlMatches = re.findall(r'(class="deadmark"></span><a href="https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_;\+.~#?&//=()]*)">(.+</a><)|class="deadmark"></span><a href="https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_;\+.~#?&//=()]*)" rel="nofollow">(.+</a><))', htmlData)
+        #print '%s' %(regularExpForUrls)
+        #print "YESSSSSS"
+        #print url
+        #if urlMatches:
+        #    for match in urlMatches:
+        #        #print match[0][33:]
+        #        print match[0]
+        #        #url = match[0][33:]
+        #        #webbrowser.get(chrome_path).open(url)
+        #else:
+        #    print 'did not find'
+
+            #https://news.ycombinator.com/over?points=200&p=1
+
+
+
 def main(argc, argv):
-    #Check if the script is ran without any arguments
+    # Check if the script is ran without any arguments
     if(argc < 2):
         print usage
         sys.exit()
 
-    #If help command is passed, print usage and quit
+    # If help command is passed, print usage and quit
     if(argv[1] == "-h" or argv[1] == "-help" or argv[1] == "h" or argv[1] == "help"):
         print usage
         sys.exit()
 
-    #Parse the arguments
+    # Parse the arguments
     parseResult = parseArguments(argv)
     if(parseResult == resultCode["resultFlagError"]):
         print parseResult
