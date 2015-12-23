@@ -108,7 +108,7 @@ def processRequest():
         numberOfPages = argsDict['-p']
     print "numberOfPages: ", numberOfPages
 
-    # Check if number of pages flag is passed, if yes, save in a variable
+    # Check if number of pages to open flag is passed, if yes, save in a variable
     if '-n' in argsDict:
         numberOfPagesToOpen = argsDict['-n']
     print "numberOfPagesToOpen: ", numberOfPagesToOpen
@@ -127,27 +127,28 @@ def processRequest():
         print "len(urlMatches): ", len(urlMatches)
         if urlMatches:
             for match in urlMatches:
-                #TODO
-                print match[0][33:].split("\">")
+                #TODO fix c++ SHA-1 issue and similar stuff
                 splittedMatch = match[0][33:].split("\">")
-                print splittedMatch[0]
-                print splittedMatch[1]
-                exit(0)
-                if re.findall(categoriesStringValue, splittedMatch[1]):
-                    print splittedMatch[0], splittedMatch[1]
-                    url = splittedMatch[0]
-                    webbrowser.get(chromePath).open(url)
+                if categoriesStringValue:
+                    print categoriesStringValue
+                    categoriesStringValueMatch = re.findall(categoriesStringValue, splittedMatch[1], re.IGNORECASE)
+                    if len(categoriesStringValueMatch) != 0:
+                        print splittedMatch[1]
+                        pagesToOpen.append(splittedMatch[0])
                 else:
-                    ddd
-
+                    pagesToOpen.append(splittedMatch[0])
         else:
             print 'Did not find anything'
             #https://news.ycombinator.com/over?points=200&p=1 #XXX
 
     # Open the web pages in the browser
-    #url = match[0][33:]
-    url = splittedMatch[0]
-    webbrowser.get(chromePath).open(url)
+    print "len(pagesToOpen) ", len(pagesToOpen)
+    if len(pagesToOpen) > 3:
+        for p in range(3):
+            webbrowser.get(chromePath).open(pagesToOpen[p])
+    else:
+        for urlToOpen in pagesToOpen:
+            webbrowser.get(chromePath).open(urlToOpen)
 
 def main(argc, argv):
     # Check if the script is ran without any arguments
