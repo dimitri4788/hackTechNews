@@ -15,6 +15,15 @@ resultCode = {
 }
 hackerNewsURL = "https://news.ycombinator.com"
 chromePath = 'open -a /Applications/Google\ Chrome.app %s'
+class termColors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
 regularExpForUrls = '(class="deadmark"></span><a href="https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_;\+.~#?&//=()]*)">(.+</a><)|class="deadmark"></span><a href="https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_;\+.~#?&//=()]*)" rel="nofollow">(.+</a><))' #XXX
 usage = """\
 usage: hackNews [-h | -help]
@@ -88,10 +97,13 @@ def parseArguments(arguments):
 
     return resultCode["resultOk"]
 
+
 # @brief Processes the request based on arguments in argsDict and
 #   forms the output urls and open them in Google Chrome
 def processRequest():
-    print "Processes Request"
+    print termColors.BOLD + termColors.UNDERLINE + termColors.HEADER + "Processing Request" + termColors.ENDC
+    #return
+    #exit(0)
     numberOfPoints = "1"
     numberOfPages = "1"
     numberOfPagesToOpen = "3"
@@ -101,22 +113,24 @@ def processRequest():
     # Check if points flag is passed, if yes, save in a variable
     if '-points' in argsDict:
         numberOfPoints = argsDict['-points']
-    print "numberOfPoints: ", numberOfPoints
+        print termColors.OKGREEN + "Number of points (-points): " + numberOfPoints + termColors.ENDC
 
     # Check if pages flag is passed, if yes, save in a variable
     if '-p' in argsDict:
         numberOfPages = argsDict['-p']
-    print "numberOfPages: ", numberOfPages
+        print termColors.OKGREEN + "Number of pages (-p): " + numberOfPages + termColors.ENDC
 
     # Check if number of pages to open flag is passed, if yes, save in a variable
     if '-n' in argsDict:
         numberOfPagesToOpen = argsDict['-n']
-    print "numberOfPagesToOpen: ", numberOfPagesToOpen
+        print termColors.OKGREEN + "Number of pages to open (-n): " + numberOfPagesToOpen + termColors.ENDC
 
     # Check if categories flag is passed, if yes, save in a variable
+    categoriesStringValueLower = ""
     if '-c' in argsDict:
         categoriesStringValue = argsDict['-c']
-    print "categoriesStringValue: ", categoriesStringValue
+        categoriesStringValueLower = categoriesStringValue.lower()
+        print termColors.OKGREEN + "Categories to search for (-c): " + categoriesStringValue + termColors.ENDC
 
     # Loop over the number of pages and construct pagesToOpen
     for page in range(int(numberOfPages)):
@@ -124,25 +138,23 @@ def processRequest():
         response = urllib2.urlopen(url)
         htmlData = response.read()
         urlMatches = re.findall(r'(class="deadmark"></span><a href="https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_;\+.~#?&//=()]*)">(.+</a><)|class="deadmark"></span><a href="https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_;\+.~#?&//=()]*)" rel="nofollow">(.+</a><))', htmlData)
-        print "len(urlMatches): ", len(urlMatches)
+        #print "len(urlMatches): ", len(urlMatches) #XXX
         if urlMatches:
             for match in urlMatches:
-                #TODO fix c++ SHA-1 issue and similar stuff
+                #TODO parse the categoriesStringValueLower and split at commas and get all the categories
                 splittedMatch = match[0][33:].split("\">")
-                if categoriesStringValue:
-                    print categoriesStringValue
-                    categoriesStringValueMatch = re.findall(categoriesStringValue, splittedMatch[1], re.IGNORECASE)
-                    if len(categoriesStringValueMatch) != 0:
-                        print splittedMatch[1]
+                splittedMatchLower = splittedMatch[1].lower()
+                if categoriesStringValueLower:
+                    if splittedMatchLower.find(categoriesStringValueLower) != -1:
                         pagesToOpen.append(splittedMatch[0])
                 else:
                     pagesToOpen.append(splittedMatch[0])
-        else:
-            print 'Did not find anything'
-            #https://news.ycombinator.com/over?points=200&p=1 #XXX
 
     # Open the web pages in the browser
-    print "len(pagesToOpen) ", len(pagesToOpen)
+    #print "len(pagesToOpen) ", len(pagesToOpen) #XXX
+    if len(pagesToOpen) == 0:
+        print termColors.FAIL + 'Did not find anything' + termColors.ENDC
+        return
     if len(pagesToOpen) > 3:
         for p in range(3):
             webbrowser.get(chromePath).open(pagesToOpen[p])
@@ -164,16 +176,18 @@ def main(argc, argv):
     # Parse the arguments
     parseResult = parseArguments(argv)
     if(parseResult == resultCode["resultFlagError"]):
-        print parseResult
+        print termColors.FAIL + parseResult + termColors.ENDC
         print usage
         sys.exit()
 
-    print "----- Hack Tech News -----"
-    print "--------------------------"
-    print "\n"
+    #XXX
+    #print "----- Hack Tech News -----"
+    #print "--------------------------"
+    #print "\n"
     processRequest()
     #generate keywords for project XXX
     #also, make a list suggetion on keywords XXX
+    print termColors.BOLD + termColors.UNDERLINE + termColors.HEADER + "Processing Done" + termColors.ENDC
 
 
 if __name__ == "__main__":
