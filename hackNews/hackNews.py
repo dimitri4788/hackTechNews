@@ -24,7 +24,7 @@ class termColors:
     ENDC = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
-regularExpForUrls = '(class="deadmark"></span><a href="https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_;\+.~#?&//=()]*)">(.+</a><)|class="deadmark"></span><a href="https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_;\+.~#?&//=()]*)" rel="nofollow">(.+</a><))' #XXX
+#urlMatches = re.findall(r'(class="deadmark"></span><a href="https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_;\+.~#?&//=()]*)">(.+</a><)|class="deadmark"></span><a href="https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_;\+.~#?&//=()]*)" rel="nofollow">(.+</a><))', htmlData)
 usage = """\
 usage: hackNews [-h | -help]
                 [-p <number of pages to scan>]
@@ -42,7 +42,7 @@ Default values of flags:
     -p:         Default value is 1
     -c:         None
     -n:         Default value is 3
-    -points:    Default value is 0
+    -points:    Default value is 1
 
 Example usage: hackNews -p 2 -c c++,linux,apache -n 3
                hackNews -c script -n 2
@@ -101,7 +101,11 @@ def parseArguments(arguments):
 # @brief Processes the request based on arguments in argsDict and
 #   forms the output urls and open them in Google Chrome
 def processRequest():
-    print termColors.BOLD + termColors.UNDERLINE + termColors.HEADER + "Processing Request" + termColors.ENDC
+    #TODO
+    #check for extreme values of flags passed by the user
+    #do parsing for -c category flag
+
+    print termColors.BOLD + termColors.UNDERLINE + termColors.HEADER + "Processing Start" + termColors.ENDC
     #return
     #exit(0)
     numberOfPoints = "1"
@@ -118,12 +122,21 @@ def processRequest():
     # Check if pages flag is passed, if yes, save in a variable
     if '-p' in argsDict:
         numberOfPages = argsDict['-p']
-        print termColors.OKGREEN + "Number of pages (-p): " + numberOfPages + termColors.ENDC
+        print termColors.OKGREEN + "Number of pages to scan (-p): " + numberOfPages + termColors.ENDC
 
     # Check if number of pages to open flag is passed, if yes, save in a variable
     if '-n' in argsDict:
         numberOfPagesToOpen = argsDict['-n']
         print termColors.OKGREEN + "Number of pages to open (-n): " + numberOfPagesToOpen + termColors.ENDC
+        # Check numberOfPagesToOpen for errors
+        if int(numberOfPagesToOpen) == 0:
+            print termColors.FAIL + 'Enter number of pages (-n)' + termColors.ENDC
+            return
+        if int(numberOfPagesToOpen) > 20:
+            print termColors.FAIL + 'Are you sure you want to enter number of pages (-n) greater than 20 (Y/N):' + termColors.ENDC,
+            usersDecision = raw_input()
+            if usersDecision == "N" or usersDecision == "n" or usersDecision == "no" or usersDecision == "No":
+                return
 
     # Check if categories flag is passed, if yes, save in a variable
     categoriesStringValueLower = ""
@@ -138,7 +151,6 @@ def processRequest():
         response = urllib2.urlopen(url)
         htmlData = response.read()
         urlMatches = re.findall(r'(class="deadmark"></span><a href="https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_;\+.~#?&//=()]*)">(.+</a><)|class="deadmark"></span><a href="https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_;\+.~#?&//=()]*)" rel="nofollow">(.+</a><))', htmlData)
-        #print "len(urlMatches): ", len(urlMatches) #XXX
         if urlMatches:
             for match in urlMatches:
                 #TODO parse the categoriesStringValueLower and split at commas and get all the categories
@@ -151,16 +163,15 @@ def processRequest():
                     pagesToOpen.append(splittedMatch[0])
 
     # Open the web pages in the browser
-    #print "len(pagesToOpen) ", len(pagesToOpen) #XXX
     if len(pagesToOpen) == 0:
         print termColors.FAIL + 'Did not find anything' + termColors.ENDC
         return
-    if len(pagesToOpen) > 3:
-        for p in range(3):
-            webbrowser.get(chromePath).open(pagesToOpen[p])
-    else:
+    if len(pagesToOpen) < int(numberOfPagesToOpen):
         for urlToOpen in pagesToOpen:
             webbrowser.get(chromePath).open(urlToOpen)
+    else:
+        for p in range(int(numberOfPagesToOpen)):
+            webbrowser.get(chromePath).open(pagesToOpen[p])
 
 def main(argc, argv):
     # Check if the script is ran without any arguments
@@ -180,15 +191,10 @@ def main(argc, argv):
         print usage
         sys.exit()
 
-    #XXX
-    #print "----- Hack Tech News -----"
-    #print "--------------------------"
-    #print "\n"
     processRequest()
     #generate keywords for project XXX
     #also, make a list suggetion on keywords XXX
     print termColors.BOLD + termColors.UNDERLINE + termColors.HEADER + "Processing Done" + termColors.ENDC
-
 
 if __name__ == "__main__":
     commandLineArgs = sys.argv
