@@ -28,7 +28,7 @@ usage = """\
 usage: hackNews [-h | -help]
                 [-p <number of pages to scan>]
                 [-c <categories to search for>]
-                [-n <number of pages to open at a time> | <all>]
+                [-n <number of pages to open at a time>]
                 [-points <points used to display pages with points higher than this>]
 
 Syntax for flags:
