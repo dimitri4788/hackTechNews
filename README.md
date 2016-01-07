@@ -3,10 +3,6 @@ Hack Tech News
 
 A command line utility to access Hacker News website in a more fun/useful way.
 
-Description
------------
-It assumes that you have Google Chrome installed and the path to its executable is */Applications/Google Chrome.app*
-
 Installation
 ------------
 ```sh
@@ -42,6 +38,10 @@ Additional information:
     1. Google Chrome web browser is needed.
     2. urllib2 and webbrowser libraries are needed.
 ```
+
+Notes
+-----
+It assumes that you have Google Chrome installed and the path to its executable is */Applications/Google Chrome.app*
 
 Author
 ------
