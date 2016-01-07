@@ -12,7 +12,7 @@ python setup.py install
 Usage
 -----
 ```
-usage: hackNews [-h | -help]
+usage: hacknews [-h | -help]
                 [-p <number of pages to scan>]
                 [-c <categories to search for>]
                 [-n <number of pages to open at a time>]
