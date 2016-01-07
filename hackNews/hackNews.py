@@ -5,9 +5,9 @@ import sys
 import urllib2
 import webbrowser
 
-####################
-# Useful declaration
-####################
+#####################
+# Useful declarations
+#####################
 argsDict = {}  # or use dict()
 resultCode = {
     "resultOk": "No error",
@@ -24,7 +24,6 @@ class termColors:
     ENDC = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
-#urlMatches = re.findall(r'(class="deadmark"></span><a href="https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_;\+.~#?&//=()]*)">(.+</a><)|class="deadmark"></span><a href="https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_;\+.~#?&//=()]*)" rel="nofollow">(.+</a><))', htmlData)
 usage = """\
 usage: hackNews [-h | -help]
                 [-p <number of pages to scan>]
@@ -101,9 +100,6 @@ def parseArguments(arguments):
 # @brief Processes the request based on arguments in argsDict and
 #   forms the output urls and open them in Google Chrome
 def processRequest():
-    #TODO
-    #check for extreme values of flags passed by the user
-
     print termColors.BOLD + termColors.UNDERLINE + termColors.HEADER + "Processing Start" + termColors.ENDC
     numberOfPoints = "1"
     numberOfPages = "1"
