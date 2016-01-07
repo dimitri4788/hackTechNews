@@ -103,11 +103,8 @@ def parseArguments(arguments):
 def processRequest():
     #TODO
     #check for extreme values of flags passed by the user
-    #do parsing for -c category flag
 
     print termColors.BOLD + termColors.UNDERLINE + termColors.HEADER + "Processing Start" + termColors.ENDC
-    #return
-    #exit(0)
     numberOfPoints = "1"
     numberOfPages = "1"
     numberOfPagesToOpen = "3"
@@ -153,19 +150,28 @@ def processRequest():
         urlMatches = re.findall(r'(class="deadmark"></span><a href="https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_;\+.~#?&//=()]*)">(.+</a><)|class="deadmark"></span><a href="https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_;\+.~#?&//=()]*)" rel="nofollow">(.+</a><))', htmlData)
         if urlMatches:
             for match in urlMatches:
-                #TODO parse the categoriesStringValueLower and split at commas and get all the categories
                 splittedMatch = match[0][33:].split("\">")
                 splittedMatchLower = splittedMatch[1].lower()
                 if categoriesStringValueLower:
-                    if splittedMatchLower.find(categoriesStringValueLower) != -1:
-                        pagesToOpen.append(splittedMatch[0])
+                    splittedCategories = categoriesStringValueLower.split(",")
+                    splittedCategoriesF = list(set(splittedCategories))  # Remove duplicates from the categories list
+                    for sc in splittedCategoriesF:
+                        if splittedMatchLower.find(sc) != -1:
+                            if splittedMatch[0].find("nofollow") != -1:
+                                pagesToOpen.append(splittedMatch[0][:-15])
+                            else:
+                                pagesToOpen.append(splittedMatch[0])
                 else:
-                    pagesToOpen.append(splittedMatch[0])
+                    if splittedMatch[0].find("nofollow") != -1:
+                        pagesToOpen.append(splittedMatch[0][:-15])
+                    else:
+                        pagesToOpen.append(splittedMatch[0])
 
     # Open the web pages in the browser
     if len(pagesToOpen) == 0:
         print termColors.FAIL + 'Did not find anything' + termColors.ENDC
         return
+    print termColors.OKGREEN + "Number of pages found: " + str(len(pagesToOpen)) + termColors.ENDC
     if len(pagesToOpen) < int(numberOfPagesToOpen):
         for urlToOpen in pagesToOpen:
             webbrowser.get(chromePath).open(urlToOpen)
@@ -192,8 +198,6 @@ def main(argc, argv):
         sys.exit()
 
     processRequest()
-    #generate keywords for project XXX
-    #also, make a list suggetion on keywords XXX
     print termColors.BOLD + termColors.UNDERLINE + termColors.HEADER + "Processing Done" + termColors.ENDC
 
 if __name__ == "__main__":
