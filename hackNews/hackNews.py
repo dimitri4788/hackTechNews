@@ -175,7 +175,13 @@ def processRequest():
         for p in range(int(numberOfPagesToOpen)):
             webbrowser.get(chromePath).open(pagesToOpen[p])
 
-def main(argc, argv):
+def main(argc=None, argv=None):
+    # Get command line arguments
+    if argc is None and argv is None:
+        commandLineArgs = sys.argv
+        argc = len(commandLineArgs)
+        argv = commandLineArgs
+
     # Check if the script is ran without any arguments
     if(argc < 2):
         print usage
@@ -197,5 +203,4 @@ def main(argc, argv):
     print termColors.BOLD + termColors.UNDERLINE + termColors.HEADER + "Processing Done" + termColors.ENDC
 
 if __name__ == "__main__":
-    commandLineArgs = sys.argv
-    main(len(commandLineArgs), commandLineArgs)
+    main()
