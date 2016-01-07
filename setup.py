@@ -16,7 +16,7 @@ setup(
     packages=find_packages(),
     entry_points={
         'console_scripts': [
-            'hackNews = hackNews.hackNews:main',
+            'hacknews = hackNews.hackNews:main',
         ]
     },
 )

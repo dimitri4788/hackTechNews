@@ -1,4 +1,4 @@
-hackNews
+hacknews
 ========
 
 A command line utility to access Hacker News website (https://news.ycombinator.com/) in a more fun/useful way.
