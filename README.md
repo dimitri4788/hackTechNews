@@ -3,6 +3,12 @@ hacknews
 
 A command line utility to access Hacker News website (https://news.ycombinator.com/) in a more fun/useful way.
 
+Description
+-----------
+Hacker News website has two features: *pages* and *points*. Each page has links to 30 news articles/pages and points feature let you filter search results based on the number of points articles have received from the users. Using these, and in addition to the categories (passed as a command line flag), you can filter articles you want to read.
+
+Categories are just keywords that are matched over all the links found on the page(s).
+
 Installation
 ------------
 ```sh
@@ -30,9 +36,10 @@ Default values of flags:
     -n:         Default value is 3
     -points:    Default value is 1
 
-Example usage: hacknews -p 2 -c c++,linux,apache -n 3
-               hacknews -c script -n 2
-               hacknews -c os,guide,database,jquery,rust -points 150
+Example usage:
+    hacknews -p 2 -c c++,linux,apache -n 3
+    hacknews -c script -n 2
+    hacknews -c os,guide,database,jquery,rust -points 150
 
 Additional information:
     1. Google Chrome web browser is needed.
