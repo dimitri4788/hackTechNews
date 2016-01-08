@@ -5,7 +5,7 @@ A command line utility to access Hacker News website (https://news.ycombinator.c
 
 Description
 -----------
-Hacker News website has two features: *pages* and *points*. Each page has links to 30 news articles/pages and points feature let you filter search results based on the number of points articles have received from the users. Using these, and in addition to the categories (passed as a command line flag), you can filter articles you want to read.
+Hacker News website has two features: *pages* and *points*. Each page has links to 30 news articles/pages and the user can go to the next page by clicking *More* at the bottom of each page. The points feature lets you filter search results based on the number of points articles have received from the users. Using these, and in addition to the categories (keywords passed as a command line flag), you can filter articles you want to read.
 
 Categories are just keywords that are matched over all the links found on the page(s).
 
