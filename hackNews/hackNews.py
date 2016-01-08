@@ -25,7 +25,7 @@ class termColors:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 usage = """\
-usage: hackNews [-h | -help]
+usage: hacknews [-h | -help]
                 [-p <number of pages to scan>]
                 [-c <categories to search for>]
                 [-n <number of pages to open at a time>]
@@ -43,9 +43,9 @@ Default values of flags:
     -n:         Default value is 3
     -points:    Default value is 1
 
-Example usage: hackNews -p 2 -c c++,linux,apache -n 3
-               hackNews -c script -n 2
-               hackNews -c os,guide,database,jquery,rust -points 150
+Example usage: hacknews -p 2 -c c++,linux,apache -n 3
+               hacknews -c script -n 2
+               hacknews -c os,guide,database,jquery,rust -points 150
 
 Additional information:
     1. Google Chrome web browser is needed.

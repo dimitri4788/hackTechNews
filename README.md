@@ -30,9 +30,9 @@ Default values of flags:
     -n:         Default value is 3
     -points:    Default value is 1
 
-Example usage: hackNews -p 2 -c c++,linux,apache -n 3
-               hackNews -c script -n 2
-               hackNews -c os,guide,database,jquery,rust -points 150
+Example usage: hacknews -p 2 -c c++,linux,apache -n 3
+               hacknews -c script -n 2
+               hacknews -c os,guide,database,jquery,rust -points 150
 
 Additional information:
     1. Google Chrome web browser is needed.
