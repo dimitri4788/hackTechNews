@@ -43,9 +43,10 @@ Default values of flags:
     -n:         Default value is 3
     -points:    Default value is 1
 
-Example usage: hacknews -p 2 -c c++,linux,apache -n 3
-               hacknews -c script -n 2
-               hacknews -c os,guide,database,jquery,rust -points 150
+Example usage:
+    hacknews -p 2 -c c++,linux,apache -n 3
+    hacknews -c script -n 2
+    hacknews -c os,guide,database,jquery,rust -points 150
 
 Additional information:
     1. Google Chrome web browser is needed.
@@ -148,11 +149,12 @@ def processRequest():
             for match in urlMatches:
                 splittedMatch = match[0][33:].split("\">")
                 splittedMatchLower = splittedMatch[1].lower()
+                splittedMatchLowerList = splittedMatchLower.split()
                 if categoriesStringValueLower:
                     splittedCategories = categoriesStringValueLower.split(",")
                     splittedCategoriesF = list(set(splittedCategories))  # Remove duplicates from the categories list
                     for sc in splittedCategoriesF:
-                        if splittedMatchLower.find(sc) != -1:
+                        if sc in splittedMatchLowerList:
                             if splittedMatch[0].find("nofollow") != -1:
                                 pagesToOpen.append(splittedMatch[0][:-15])
                             else:
@@ -199,6 +201,7 @@ def main(argc=None, argv=None):
         print usage
         sys.exit()
 
+    # Process the request
     processRequest()
     print termColors.BOLD + termColors.UNDERLINE + termColors.HEADER + "Processing Done" + termColors.ENDC
 
