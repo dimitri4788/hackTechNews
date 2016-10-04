@@ -144,26 +144,39 @@ def processRequest():
         url = hackerNewsURL + "/over?points=" + numberOfPoints + "&p=" + str(page+1)
         response = urllib2.urlopen(url)
         htmlData = response.read()
-        urlMatches = re.findall(r'(class="deadmark"></span><a href="https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_;\+.~#?&//=()]*)">(.+</a><)|class="deadmark"></span><a href="https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_;\+.~#?&//=()]*)" rel="nofollow">(.+</a><))', htmlData)
+        #urlMatches = re.findall(r'(class="deadmark"></span><a href="https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_;\+.~#?&//=()]*)">(.+</a><)|class="deadmark"></span><a href="https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_;\+.~#?&//=()]*)" rel="nofollow">(.+</a><))', htmlData)
+        urlMatches = re.findall(r'(class="title"><a href="https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_;\+.~#?&//=()]*)" class="storylink">|class="title"><a href="https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_;\+.~#?&//=()]*)" class="storylink"> rel="nofollow">(.+</a><))', htmlData)
+
+        #class="title"><a href="http://paperplanes.world" class="storylink"> XXX
+        #class="title"><a href="http://www.atlasobscura.com/articles/lovely-hidden-paintings-adorned-the-edges-of-historic-books" class="storylink" rel="nofollow"> XXX
+
         if urlMatches:
             for match in urlMatches:
+                print "match1 -------- ", match
+                xdeep = match[0].split("<a href=\"")
+                ydeep =  xdeep[1].split("\" class=\"storylink\">")
+                print "ydeep: ", ydeep[0]
                 splittedMatch = match[0][33:].split("\">")
-                splittedMatchLower = splittedMatch[1].lower()
-                splittedMatchLowerList = splittedMatchLower.split()
-                if categoriesStringValueLower:
-                    splittedCategories = categoriesStringValueLower.split(",")
-                    splittedCategoriesF = list(set(splittedCategories))  # Remove duplicates from the categories list
-                    for sc in splittedCategoriesF:
-                        if sc in splittedMatchLowerList:
-                            if splittedMatch[0].find("nofollow") != -1:
-                                pagesToOpen.append(splittedMatch[0][:-15])
-                            else:
-                                pagesToOpen.append(splittedMatch[0])
-                else:
-                    if splittedMatch[0].find("nofollow") != -1:
-                        pagesToOpen.append(splittedMatch[0][:-15])
-                    else:
-                        pagesToOpen.append(splittedMatch[0])
+
+                pagesToOpen.append(ydeep[0])
+                #splittedMatchLower = splittedMatch[1].lower()
+                #splittedMatchLowerList = splittedMatchLower.split()
+                #if categoriesStringValueLower:
+                #    splittedCategories = categoriesStringValueLower.split(",")
+                #    splittedCategoriesF = list(set(splittedCategories))  # Remove duplicates from the categories list
+                #    for sc in splittedCategoriesF:
+                #        if sc in splittedMatchLowerList:
+                #            if splittedMatch[0].find("nofollow") != -1:
+                #                pagesToOpen.append(splittedMatch[0][:-15])
+                #            else:
+                #                pagesToOpen.append(splittedMatch[0])
+                #else:
+                #    if splittedMatch[0].find("nofollow") != -1:
+                #        pagesToOpen.append(splittedMatch[0][:-15])
+                #    else:
+                #        pagesToOpen.append(splittedMatch[0])
+    print "------------------------" #XXX
+    print pagesToOpen #XXX
 
     # Open the web pages in the browser
     if len(pagesToOpen) == 0:
@@ -175,6 +188,7 @@ def processRequest():
             webbrowser.get(chromePath).open(urlToOpen)
     else:
         for p in range(int(numberOfPagesToOpen)):
+            print pagesToOpen[p]
             webbrowser.get(chromePath).open(pagesToOpen[p])
 
 def main(argc=None, argv=None):
