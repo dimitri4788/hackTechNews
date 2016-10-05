@@ -12,7 +12,8 @@ Categories are just keywords that are matched over all the links found on the pa
 Installation
 ------------
 ```sh
-python setup.py install
+$ cd hackTechNews
+$ python setup.py install
 ```
 
 Usage
@@ -46,8 +47,8 @@ Additional information:
     2. urllib2 and webbrowser libraries are needed.
 ```
 
-Notes
------
+Note
+----
 It assumes that you have Google Chrome installed and the path to its executable is */Applications/Google Chrome.app*
 
 Author
