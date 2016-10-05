@@ -150,7 +150,6 @@ def processRequest():
         categoriesStringValue = argsDict['-c']
         categoriesStringValueLower = categoriesStringValue.lower()
         print termColors.OKGREEN + "Categories to search for (-c): " + categoriesStringValue + termColors.ENDC
-    print categoriesStringValueLower #XXX
 
     # Loop over the number of pages and construct pagesToOpen
     for page in range(int(numberOfPages)):
@@ -165,29 +164,17 @@ def processRequest():
                 match2 = match1[1].split("\" class=\"storylink\">")
                 newsLink = match2[0]
                 newsTitle = match2[1].split("</a><")
-                #print "news title: ", newsTitle[0] XXX
-                #print "news link: ", newsLink XXX
-                #print
-                #exit(0) #XXX
 
-                #pagesToOpen.append(newsLink) #XXX
                 splittedMatchLower = newsTitle[0].lower()
                 splittedMatchLowerList = splittedMatchLower.split()
-                print splittedMatchLowerList
                 if categoriesStringValueLower:
                     splittedCategories = categoriesStringValueLower.split(",")
                     splittedCategoriesF = list(set(splittedCategories))  # Remove duplicates from the categories list
                     for sc in splittedCategoriesF:
                         if sc in splittedMatchLowerList:
-                            if newsLink[0].find("nofollow") != -1:
-                                pagesToOpen.append(newsLink[0][:-15])
-                            else:
-                                pagesToOpen.append(newsLink[0])
+                            pagesToOpen.append(newsLink)
                 else:
-                    if newsLink[0].find("nofollow") != -1:
-                        pagesToOpen.append(newsLink[0][:-15])
-                    else:
-                        pagesToOpen.append(newsLink[0])
+                    pagesToOpen.append(newsLink)
 
     # Open the web pages in the browser
     if len(pagesToOpen) == 0:
