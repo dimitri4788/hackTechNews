@@ -9,8 +9,7 @@ import webbrowser
 # Useful declarations
 #####################
 argsDict = {}  # or use dict()
-resultCode =
-{
+resultCode = {
     "resultOk": "No error",
     "resultFlagError": "Error with flag(s)."
 }
@@ -27,6 +26,8 @@ class termColors:
     ENDC = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
+
+
 usage = """\
 usage: hacknews [-h | -help]
                 [-p <number of pages to scan>]
@@ -65,10 +66,9 @@ def parseArguments(arguments):
     For example: hackNews -p 2 -c c++,linux,apache -n 3
                 keys: -p, -c, -n
                 values: 2, c++,linux,apache, 3
+
     Args:
-        month (str): The month to fetch amount from
-        year (str): The year to fetch amount from
-        arguments The command line arguments to parse
+        arguments (str): The command line arguments to parse
 
     Returns:
         It returns one of the resultCode's
@@ -108,9 +108,11 @@ def parseArguments(arguments):
     return resultCode["resultOk"]
 
 
-# @brief Processes the request based on arguments in argsDict and
-#   forms the output urls and open them in Google Chrome
 def processRequest():
+    """Processes the request based on arguments in argsDict and
+    forms the output urls and open them in Google Chrome
+    """
+
     print termColors.BOLD + termColors.UNDERLINE + termColors.HEADER + "Processing Start" + termColors.ENDC
     numberOfPoints = "1"
     numberOfPages = "1"
@@ -148,40 +150,44 @@ def processRequest():
         categoriesStringValue = argsDict['-c']
         categoriesStringValueLower = categoriesStringValue.lower()
         print termColors.OKGREEN + "Categories to search for (-c): " + categoriesStringValue + termColors.ENDC
+    print categoriesStringValueLower #XXX
 
     # Loop over the number of pages and construct pagesToOpen
     for page in range(int(numberOfPages)):
         url = hackerNewsURL + "/over?points=" + numberOfPoints + "&p=" + str(page+1)
         response = urllib2.urlopen(url)
         htmlData = response.read()
-        urlMatches = re.findall(r'(class="title"><a href="https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,10}\b([-a-zA-Z0-9@:%_;\+.~#?&//=()]*)" class="storylink">|class="title"><a href="https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_;\+.~#?&//=()]*)" class="storylink"> rel="nofollow">(.+</a><))', htmlData)
+        urlMatches = re.findall(r'(class="title"><a href="https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,10}\b([-a-zA-Z0-9@:%_;\+.~#?&//=()]*)" class="storylink">(.+</a><)|class="title"><a href="https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_;\+.~#?&//=()]*)" class="storylink"> rel="nofollow">(.+</a><))', htmlData)
 
         if urlMatches:
             for match in urlMatches:
-                print "match1 -------- ", match
-                # TODO fix this
-                xdeep = match[0].split("<a href=\"")
-                ydeep = xdeep[1].split("\" class=\"storylink\">")
-                # print "ydeep: ", ydeep[0]
-                splittedMatch = match[0][33:].split("\">")
+                match1 = match[0].split("<a href=\"")
+                match2 = match1[1].split("\" class=\"storylink\">")
+                newsLink = match2[0]
+                newsTitle = match2[1].split("</a><")
+                #print "news title: ", newsTitle[0] XXX
+                #print "news link: ", newsLink XXX
+                #print
+                #exit(0) #XXX
 
-                pagesToOpen.append(ydeep[0])
-                # splittedMatchLower = splittedMatch[1].lower()
-                # splittedMatchLowerList = splittedMatchLower.split()
-                # if categoriesStringValueLower:
-                #     splittedCategories = categoriesStringValueLower.split(",")
-                #     splittedCategoriesF = list(set(splittedCategories))  # Remove duplicates from the categories list
-                #     for sc in splittedCategoriesF:
-                #         if sc in splittedMatchLowerList:
-                #             if splittedMatch[0].find("nofollow") != -1:
-                #                 pagesToOpen.append(splittedMatch[0][:-15])
-                #             else:
-                #                 pagesToOpen.append(splittedMatch[0])
-                # else:
-                #     if splittedMatch[0].find("nofollow") != -1:
-                #         pagesToOpen.append(splittedMatch[0][:-15])
-                #     else:
-                #         pagesToOpen.append(splittedMatch[0])
+                #pagesToOpen.append(newsLink) #XXX
+                splittedMatchLower = newsTitle[0].lower()
+                splittedMatchLowerList = splittedMatchLower.split()
+                print splittedMatchLowerList
+                if categoriesStringValueLower:
+                    splittedCategories = categoriesStringValueLower.split(",")
+                    splittedCategoriesF = list(set(splittedCategories))  # Remove duplicates from the categories list
+                    for sc in splittedCategoriesF:
+                        if sc in splittedMatchLowerList:
+                            if newsLink[0].find("nofollow") != -1:
+                                pagesToOpen.append(newsLink[0][:-15])
+                            else:
+                                pagesToOpen.append(newsLink[0])
+                else:
+                    if newsLink[0].find("nofollow") != -1:
+                        pagesToOpen.append(newsLink[0][:-15])
+                    else:
+                        pagesToOpen.append(newsLink[0])
 
     # Open the web pages in the browser
     if len(pagesToOpen) == 0:
@@ -193,7 +199,6 @@ def processRequest():
             webbrowser.get(chromePath).open(urlToOpen)
     else:
         for p in range(int(numberOfPagesToOpen)):
-            print pagesToOpen[p]
             webbrowser.get(chromePath).open(pagesToOpen[p])
 
 
